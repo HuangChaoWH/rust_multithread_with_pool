@@ -1,0 +1,6 @@
+[package]
+name = "rust_multithread_with_pool"
+version = "0.1.0"
+authors = ["huangchao <huangchao@hotmail.com>"]
+
+[dependencies]
