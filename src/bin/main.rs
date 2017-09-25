@@ -21,9 +21,18 @@ fn main() {
 
 	let pool = ThreadPool::new(4);
 
+	let mut counter = 0;
+
 	let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
 
 	for stream in listener.incoming() {
+		if counter == 4 {
+			println!("Shutting down.");
+			break;
+		}
+
+		counter += 1;
+
 		let stream = stream.unwrap();
 
 		println!("Connection established!");
