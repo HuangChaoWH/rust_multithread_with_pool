@@ -6,11 +6,20 @@ use std::fs::File;
 use std::thread;
 use std::time::Duration;
 
+use std::sync::Arc;
+use std::sync::Mutex;
+
+
+extern crate rust_multithread_with_pool;
+use rust_multithread_with_pool::ThreadPool;
+
 // curl -v 127.0.0.1:8080
 // as client, which will display the response message
 
 fn main() {
 	println!("\nTest in another terminal with command :\n\n curl -v http://localhost:8080\n\n");
+
+	let pool = ThreadPool::new(4);
 
 	let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
 
@@ -18,7 +27,10 @@ fn main() {
 		let stream = stream.unwrap();
 
 		println!("Connection established!");
-		handle_connection(stream);
+		pool.execute(|| {
+			handle_connection(stream);
+		});
+
 	}
 }
 
@@ -48,7 +60,7 @@ fn handle_connection(mut stream: TcpStream) {
 	let mut contents = String::new();
 	file.read_to_string(&mut contents).unwrap();
 
-	println!("Request: {}", String::from_utf8_lossy(&buffer[..]));
+	//println!("Request: {}", String::from_utf8_lossy(&buffer[..]));
 
 	let response = format!("{}\r\n\r\n{}", status_line, contents);
 
